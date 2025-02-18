@@ -1,24 +1,9 @@
 stages:
-  - build
   - deploy
 
-# Build Stage
-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:19.03.12-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  before_script:
-    - docker info
-  script:
-    - docker build -t $DOCKER_USERNAME/book-lib-management .
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    - docker push $DOCKER_USERNAME/book-lib-management
-
-# Deploy Stage (optional, customize as needed)
 deploy:
   stage: deploy
+  image: nikita1409/book-lib-management:latest  # Use your Docker image here
   script:
-    - echo "Deployment step goes here (e.g., AWS, Kubernetes, etc.)"
+    - echo "Deploying the Dockerized application using image nikita1409/book-lib-management"
+    - docker run -d -p 3000:3000 nikita1409/book-lib-management:latest  # Run the image, mapping ports
