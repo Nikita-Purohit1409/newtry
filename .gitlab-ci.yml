@@ -2,25 +2,23 @@ stages:
   - build
   - deploy
 
-# Build Docker image
+# Build Stage
 build:
   stage: build
   image: docker:latest
   services:
-    - docker:dind  # Docker in Docker service for building Docker images
+    - docker:19.03.12-dind
+  variables:
+    DOCKER_DRIVER: overlay2
   before_script:
-    - docker info  # Check if Docker is running
+    - docker info
   script:
-    - docker build -t nikita1409/book-lib-management:$CI_COMMIT_SHA .  # Build the Docker image with commit SHA as tag
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD  # Login to Docker Hub
-    - docker push nikita1409/book-lib-management:$CI_COMMIT_SHA  # Push image to Docker Hub
-  only:
-    - main  # Only trigger this job for the main branch
+    - docker build -t $DOCKER_USERNAME/book-lib-management .
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker push $DOCKER_USERNAME/book-lib-management
 
-# Deploy stage (optional, can be customized)
+# Deploy Stage (optional, customize as needed)
 deploy:
   stage: deploy
   script:
-    - echo "Deploying your app..."  # Replace this with actual deploy steps if required
-  only:
-    - main  # Deploy on the main branch
+    - echo "Deployment step goes here (e.g., AWS, Kubernetes, etc.)"
