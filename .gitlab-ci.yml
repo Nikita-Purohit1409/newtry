@@ -3,7 +3,7 @@ stages:
 
 deploy:
   stage: deploy
-  image: nikita1409/book-lib-management:latest  # Use your Docker image here
+  image: nikita1409/book-lib-management:latest  # Use your Docker image
   script:
     - echo "Deploying the Dockerized application using image nikita1409/book-lib-management"
-    - docker run -d -p 3000:3000 nikita1409/book-lib-management:latest  # Run the image, mapping ports
+    - docker run -d -p 3000:3000 -p 3001:3001 nikita1409/book-lib-management:latest  # Exposing both ports 3000 and 3001
