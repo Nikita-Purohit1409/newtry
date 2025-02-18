@@ -3,6 +3,10 @@ stages:
 
 build:
   stage: build
-  image: nikita-purohit1409/book-management:latest
+  image: docker:latest
+  services:
+    - docker:dind
   script:
-    - echo "Using pre-built Docker image. No build step needed."
+    - echo "Pulling pre-built Docker image..."
+    - docker pull nikita-purohit1409/book-management:latest
+    - echo "Image pulled successfully"
