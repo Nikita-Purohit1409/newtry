@@ -17,11 +17,7 @@ deploy:
   stage: deploy
   script:
     - echo "Running Docker container..."
-    - docker run -d -p 8080:8080 nikita1409/book-lib-management:latest  # Run the Docker container with your image
+    # Run the Docker container, exposing the app port 3000 and database port 3001
+    - docker run -d -p 3000:3000 -p 3001:3001 nikita1409/book-lib-management:latest  # Run the Docker container with your image
   only:
-    - main  # Run this job only on the master branch
-
-
-
-
-
+    - master  # Run this job only on the master branch
