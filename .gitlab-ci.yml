@@ -1,12 +1,8 @@
 stages:
-  - build
+  build
 
 build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  image: book-lib-management
   script:
-    - echo "Pulling pre-built Docker image..."
-    - docker pull nikita-purohit1409/book-management:latest
-    - echo "Image pulled successfully"
+    -docker build is successfull
