@@ -1,0 +1,20 @@
+stages:
+  - build
+  - deploy
+
+# Build stage
+build:
+  stage: build
+  script:
+    - docker pull nikita1409/book-lib-management  # Pull the Docker image from Docker Hub
+  only:
+    - master  # Run this job only on the master branch
+
+# Deploy stage
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the Docker container"
+    - docker run -d -p 8080:8080 nikita1409/book-lib-management  # Deploy the container
+  only:
+    - master  # Run this job only on the master branch
