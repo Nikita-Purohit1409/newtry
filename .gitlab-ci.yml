@@ -19,7 +19,7 @@ deploy:
     - echo "Running Docker container..."
     - docker run -d -p 8080:8080 nikita1409/book-lib-management:latest  # Run the Docker container with your image
   only:
-    - master  # Run this job only on the master branch
+    - main  # Run this job only on the master branch
 
 
 
