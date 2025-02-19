@@ -1,16 +1,28 @@
+image: docker:20
+
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: nikita1409/book-lib-management
+  CONTAINER_NAME: book-lib-app
+  PORT: 3000
+
+before_script:
+  - docker info
+
 build:
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
   script:
-    - echo "Verifying Docker installation..."
-    - docker --version
-    - echo "Building the Docker image..."
-    - docker build -t nikita1409/book-lib-management:latest .
-    - echo "Logging into Docker Hub..."
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - echo "Pushing the Docker image to Docker Hub..."
-    - docker push nikita1409/book-lib-management:latest
-  only:
-    - main
+    - echo "Pulling latest image from DockerHub..."
+    - docker pull $IMAGE_NAME:latest
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Stopping old container (if running)..."
+    - docker stop $CONTAINER_NAME || true
+    - docker rm $CONTAINER_NAME || true
+    - echo "Starting new container..."
+    - docker run -d --name $CONTAINER_NAME -p 3000:3000 $IMAGE_NAME:latest
