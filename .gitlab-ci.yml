@@ -1,5 +1,17 @@
 stages:
+  - test
   - deploy
+
+test:
+  stage: test
+  image: node:18
+  script:
+    - echo "Installing dependencies..."
+    - npm install
+    - echo "Running tests..."
+    - npm test  # Make sure you have tests defined in package.json
+  only:
+    - main  # Runs only on the main branch
 
 deploy:
   stage: deploy
