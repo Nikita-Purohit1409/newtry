@@ -1,7 +1,24 @@
 stages:
+  - build
   - deploy
   - test
 
+# Build stage - builds the Docker image
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "Building the Docker image..."
+    - docker build -t nikita1409/book-lib-management:latest .
+    - echo "Pushing the Docker image to Docker Hub..."
+    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    - docker push nikita1409/book-lib-management:latest
+  only:
+    - main
+
+# Deploy stage - pulls and runs the Docker image
 deploy:
   stage: deploy
   image: docker:latest
@@ -15,13 +32,13 @@ deploy:
   only:
     - main
 
+# Test stage - runs tests
 test:
   stage: test
   image: node:18
   script:
-    - echo "Installing dependencies..."
-    - npm install
     - echo "Running tests..."
-    - npm test || echo "No test script found, skipping tests."
+    - npm install
+    - npm test
   only:
     - main
