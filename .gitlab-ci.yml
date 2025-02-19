@@ -28,7 +28,7 @@ test:
   stage: test
   script:
     - echo "Running tests..."
-    - docker run --rm $IMAGE_NAME:latest npm test  # Replace with your test command
+    - docker run --rm $IMAGE_NAME:latest sh -c "npm install && npm test"  # Ensure dependencies exist
 
 deploy:
   stage: deploy
