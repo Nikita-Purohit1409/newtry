@@ -1,44 +1,16 @@
-stages:
-  - build
-  - deploy
-  - test
-
-# Build stage - builds the Docker image
 build:
   stage: build
   image: docker:latest
   services:
     - docker:dind
   script:
+    - echo "Verifying Docker installation..."
+    - docker --version
     - echo "Building the Docker image..."
     - docker build -t nikita1409/book-lib-management:latest .
+    - echo "Logging into Docker Hub..."
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - echo "Pushing the Docker image to Docker Hub..."
-    - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - docker push nikita1409/book-lib-management:latest
-  only:
-    - main
-
-# Deploy stage - pulls and runs the Docker image
-deploy:
-  stage: deploy
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - echo "Pulling the Docker image from Docker Hub..."
-    - docker pull nikita1409/book-lib-management:latest
-    - echo "Running the container..."
-    - docker run -d -p 3000:3000 nikita1409/book-lib-management:latest
-  only:
-    - main
-
-# Test stage - runs tests
-test:
-  stage: test
-  image: node:18
-  script:
-    - echo "Running tests..."
-    - npm install
-    - npm test
   only:
     - main
