@@ -4,7 +4,7 @@ services:
   - docker:dind  # Enable Docker-in-Docker
 
 variables:
-  DOCKER_HOST: tcp://docker:2375  # Connect to the Docker daemon
+  DOCKER_HOST: tcp://docker:2375  # Connect to Docker Daemon
   DOCKER_TLS_CERTDIR: ""          # Disable TLS (needed for DinD)
   IMAGE_NAME: nikita1409/book-lib-management
   CONTAINER_NAME: book-lib-app
@@ -12,6 +12,7 @@ variables:
 
 stages:
   - build
+  - test
   - deploy
 
 before_script:
@@ -22,6 +23,12 @@ build:
   script:
     - echo "Pulling latest image from DockerHub..."
     - docker pull $IMAGE_NAME:latest
+
+test:
+  stage: test
+  script:
+    - echo "Running tests..."
+    - docker run --rm $IMAGE_NAME:latest npm test  # Replace with your test command
 
 deploy:
   stage: deploy
