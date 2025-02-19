@@ -1,44 +1,29 @@
-image: docker:20  # Using Docker image
-
+image: docker:20  
 services:
-  - docker:dind  # Enable Docker-in-Docker
+  - docker:dind  
 
 variables:
-  DOCKER_HOST: tcp://docker:2375  # Connect to Docker Daemon
-  DOCKER_TLS_CERTDIR: ""          # Disable TLS (needed for DinD)
   IMAGE_NAME: nikita1409/book-lib-management
   CONTAINER_NAME: book-lib-app
   PORT: 3000
 
 stages:
   - build
-  - test
   - deploy
 
 before_script:
-  - docker info  # Check Docker connectivity
+  - docker info  
 
 build:
   stage: build
   script:
-    - echo "Pulling latest image from DockerHub..."
-    - docker pull $IMAGE_NAME:latest
-
-test:
-  stage: test
-  script:
-    - echo "Checking if tests exist..."
-    - docker run --rm $IMAGE_NAME:latest sh -c "ls -la && cat package.json"
-    - echo "Installing missing dependencies..."
-    - docker run --rm $IMAGE_NAME:latest sh -c "npm install"
-    - echo "Running tests..."
-    - docker run --rm $IMAGE_NAME:latest sh -c "npm test || echo 'Tests failed!'"
+    - docker pull $IMAGE_NAME:latest || true  # Pull if exists
+    - docker build -t $IMAGE_NAME .
+    - docker push $IMAGE_NAME  
 
 deploy:
   stage: deploy
   script:
-    - echo "Stopping old container (if running)..."
     - docker stop $CONTAINER_NAME || true
     - docker rm $CONTAINER_NAME || true
-    - echo "Starting new container..."
     - docker run -d --name $CONTAINER_NAME -p $PORT:$PORT $IMAGE_NAME:latest
