@@ -1,20 +1,26 @@
-# Use official Node.js image as the base image
-FROM node:18
+# Use Node.js base image
+FROM node:18-alpine
 
-# Set the working directory inside the container
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to install dependencies
-COPY package*.json ./
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy all the application files into the container
+# Install JSON Server globally
+RUN npm install -g json-server concurrently
+
+# Copy all project files to the container
 COPY . .
 
-# Expose the default Next.js port
-EXPOSE 3000
+# Build the Next.js app
+RUN npm run build
 
-# Command to run the app in development mode (you can change it to 'npm run build && npm start' for production)
-CMD ["npm", "run", "dev"]
+# Expose ports for both services
+EXPOSE 3000 3001
+
+# Run Next.js and JSON Server together
+CMD concurrently "npm run start" "json-server --watch db.json --port 3001"
